@@ -1,0 +1,83 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+
+    "config": {
+      ".read": true,
+      ".write": "auth != null && root.child('adminRoles').child(auth.uid).val() === true"
+    },
+
+    "shareCodes": {
+      ".read": true,
+      "$code": {
+        ".write": "auth != null"
+      }
+    },
+
+    "appUpdate": {
+      ".read": true,
+      ".write": "auth != null && root.child('adminRoles').child(auth.uid).val() === true"
+    },
+
+    "notifications": {
+      ".read": true,
+      ".write": "auth != null && root.child('adminRoles').child(auth.uid).val() === true"
+    },
+
+    "metadata": {
+      "lastUpdated": {
+        ".read": true,
+        ".write": "auth != null && root.child('adminRoles').child(auth.uid).val() === true"
+      }
+    },
+
+    "categories": {
+      ".read": true,
+      "$categoryId": {
+        ".write": "auth != null && root.child('adminRoles').child(auth.uid).val() === true",
+        ".validate": "newData.hasChildren(['id', 'name', 'type', 'active']) && (newData.child('type').val() === 'MOVIE' || newData.child('type').val() === 'SERIES' || newData.child('type').val() === 'BOTH')"
+      }
+    },
+
+    "movies": {
+      ".read": true,
+      ".indexOn": ["published", "categoryId", "tmdbId", "createdAt", "normalizedTitle"],
+      "$movieId": {
+        ".write": "auth != null && root.child('adminRoles').child(auth.uid).val() === true",
+        ".validate": "newData.hasChildren(['id', 'title', 'mediaType', 'published', 'createdAt', 'updatedAt'])"
+      }
+    },
+
+    "webseries": {
+      ".read": true,
+      ".indexOn": ["published", "categoryId", "tmdbId", "createdAt", "normalizedTitle"],
+      "$seriesId": {
+        ".write": "auth != null && root.child('adminRoles').child(auth.uid).val() === true",
+        ".validate": "newData.hasChildren(['id', 'title', 'mediaType', 'published', 'createdAt', 'updatedAt'])"
+      }
+    },
+
+    "users": {
+      ".read": "auth != null",
+      "$uid": {
+        ".read": "auth != null",
+        ".write": "auth != null"
+      }
+    },
+
+    "userLists": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "auth != null && auth.uid === $uid"
+      }
+    },
+
+    "adminRoles": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": false
+      }
+    }
+  }
+}
